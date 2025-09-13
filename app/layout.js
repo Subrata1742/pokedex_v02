@@ -1,5 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Navbar from "./component/navbar";
+import { PokemonProvider } from "@/context/pokemonProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,7 +24,14 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+       <PokemonProvider>
+<div className="  bg-transparent opacity-85  relative min-h-screen bg-fixed bg-cover bg-center"
+     style={{ backgroundImage: "url('/image/bg-dex.jpg')" }}>
+  
+       <Navbar />
         {children}
+</div>
+      </PokemonProvider>
       </body>
     </html>
   );
