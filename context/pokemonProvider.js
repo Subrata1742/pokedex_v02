@@ -42,7 +42,7 @@ export function PokemonProvider({ children }) {
             })),
             description: species.flavor_text_entries.find(
               (entry) => entry.language.name === 'en'
-            )?.flavor_text || '',
+            )?.flavor_text.replace(/[\n ,\f]/g, " ") || '',
             abilities: detail.abilities.map((a) => ({ name: a.ability.name, is_hidden: a.is_hidden })),
             cry : detail.cries.latest,
             species: species.genera.find((g) => g.language.name === 'en')?.genus || '', 

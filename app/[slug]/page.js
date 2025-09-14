@@ -14,12 +14,18 @@ import {
   Radar,
   ResponsiveContainer,
 } from "recharts";
-import { cn } from "@/lib/utils";
+// import { cn } from "@/lib/utils";
 import { Eye } from "lucide-react";
 import { Info } from "lucide-react";
 import { LucideRadar } from "lucide-react";
 import { House } from "lucide-react";
-import PokemonModel from "../component/model";
+import PokemonModel from "../component/slug/model";
+import { Cry } from "../component/slug/cry";
+import { PokedexEntry } from "../component/slug/PokedexEntry";
+import typeImg from "@/lib/Type";
+import Image from "next/image";
+import { Separator } from "@/components/ui/separator";
+// import {pokeball} from "../../public/image/pokeball.png"
 // import "@google/model-viewer";
 
 const PokemonPage = ({ params }) => {
@@ -32,7 +38,7 @@ const PokemonPage = ({ params }) => {
   function formatThreeDigitNumber(i) {
     return String(i).padStart(3, "0");
   }
-   
+
   if (loading) {
     return <p>Loading...</p>;
   }
@@ -40,79 +46,109 @@ const PokemonPage = ({ params }) => {
   if (!P) {
     return <p>Pokémon not found.</p>;
   }
-function formatStatName(name) {
-  const mapping = {
-    "special-attack": "Sp.Atk",
-    "special-defense": "Sp.Def",
-    hp: "HP",
-    speed: "Speed",
-  };
-  return mapping[name] || name.charAt(0).toUpperCase() + name.slice(1);
-}
-const chartData = P.stats.map((s) => ({
+  function formatStatName(name) {
+    const mapping = {
+      "special-attack": "Sp.Atk",
+      "special-defense": "Sp.Def",
+      hp: "HP",
+      speed: "Speed",
+    };
+    return mapping[name] || name.charAt(0).toUpperCase() + name.slice(1);
+  }
+  const chartData = P.stats.map((s) => ({
     ...s,
     name: formatStatName(s.name),
   }));
   const p = forms.find((p) => p.id === P.order);
-   const formsName = p ? p.forms : null;
-   const mega = (f) => {
-     if (f.formName === "xy") {
-        if(f.name === "Mega Mewtwo X" || f.name === "Mega Charizard X"){
-          return "Mega x";
-        }
-        if (f.name === "Mega Mewtwo Y" || f.name === "Mega Charizard Y") {
-          return "Mega y";
-        }
-        return "Mega";
-     }
-     return f.formName;
-   };
+  const formsName = p ? p.forms : null;
+  const mega = (f) => {
+    if (f.formName === "xy") {
+      if (f.name === "Mega Mewtwo X" || f.name === "Mega Charizard X") {
+        return "Mega x";
+      }
+      if (f.name === "Mega Mewtwo Y" || f.name === "Mega Charizard Y") {
+        return "Mega y";
+      }
+      return "Mega";
+    }
+    return f.formName;
+  };
   return (
     <div className="h-screen w-screen  text-white">
       <div className="h-full flex flex-col p-6">
         {/* Header */}
-        <h1 className="text-2xl font-bold mb-6">SUMMARY</h1>
+        <div className="flex flex-row ">
+          <Image
+            src={"/image/pokeball.png"}
+            alt="Pokeball"
+            width={20}
+            height={20}
+            className="w-8 h-8 mt-0.5 mx-2 animate-spin"
+          />
+          <div className="text-2xl text-center font-bold mb-6"> SUMMARY</div>
+        </div>
 
         {/* Main Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1">
           {/* Pokémon Card */}
-          <Card className="bg-blue-950/80 border-blue-700 shadow-lg md:col-span-1 flex flex-col text-white">
+          <Card className="bg-blue-950/80 border-blue-700 shadow-lg  text-white">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <span className="text-lg font-semibold capitalize">
-                  {P.name}
-                </span>
-                {P.types.map((type, index) => (
-                  <Badge key={index} className="bg-green-600 capitalize">
-                    {type}
-                  </Badge>
-                ))}
+              <CardTitle className="flex flex-col w-full items-start justify-center gap-1">
+                <div className="flex flex-row justify-between w-full gap-0  ">
+                  <span className="text-xl font-semibold   capitalize">
+                    {P.name}
+                  </span>{" "}
+                  <div className=" flex gap-1">
+                    {P.types.map((type, index) => (
+                      <Badge key={index} className=" bg-transparent capitalize">
+                        <img
+                          className="w-24 h-6 border border-blue-900 rounded"
+                          src={
+                            typeImg[type] ? typeImg[type] : "/placeholder.png"
+                          }
+                          alt={type}
+                        />
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+                <p className="text-md opacity-75">{P.species}</p>
               </CardTitle>
             </CardHeader>
             <CardContent className="flex-1 flex flex-col items-center justify-center">
               <PokemonModel P={P.order} />
-             <div className="flex gap-2">
-              {formsName.map((f, i) => (
-                <Button
-                key={i}
-                onClick={() => {
-                  document.querySelector("model-viewer").src = f.model;
-                }}
-                className="p-2 bg-blue-950/70 text-white rounded capitalize"
-                >{mega(f)}
-           
-          </Button>
-        ))}
-        </div> 
+              <div className="flex gap-2">
+                {formsName &&
+                  formsName.map((f, i) => (
+                    <Button
+                      key={i}
+                      onClick={() => {
+                        document.querySelector("model-viewer").src = f.model;
+                      }}
+                      className="p-2 bg-blue-950/70 text-white rounded capitalize"
+                    >
+                      {mega(f)}
+                    </Button>
+                  ))}
+              </div>
             </CardContent>
           </Card>
 
           {/* Info / Stats Card */}
           <Card className="bg-blue-950/80 text-white border-blue-700 shadow-lg md:col-span-2 flex flex-col">
             <CardHeader>
-              <CardTitle className="text-lg text-center font-semibold">
-                Details
-              </CardTitle>
+              <div className="flex ml-16 flex-row gap-0 items-center">
+                <div className="flex items-center rounded-l-sm rounded-r-xs bg-sky-200 font-bold w-[60px] h-[37px] text-blue-900">
+                  {" "}
+                  <Eye className="w-4 h-4 mx-2 " />
+                  <span>{formatThreeDigitNumber(P.order)}</span>
+                </div>
+                <div class="w-0 h-0 border-t-[19px] border-t-transparent border-l-[30px] border-l-sky-200 border-b-[19px] border-b-transparent"></div>
+                
+                <h1 className=" ml-5 capitalize text-xl text-white font-bold">
+                  {P.name}
+                </h1>
+              </div>
             </CardHeader>
             <CardContent className="flex-1">
               <Tabs
@@ -124,85 +160,66 @@ const chartData = P.stats.map((s) => ({
                 <TabsList className="grid grid-cols-1 col-span-1 w-fit bg-transparent h-full gap-4 ">
                   <TabsTrigger
                     value="info"
-                    className="justify-start data-[state=active]:bg-blue-950/75"
+                    className="justify-start p-2 px-4 bg-blue-700/60 data-[state=active]:bg-slate-900"
                   >
                     <Info className="  text-sky-200 " />
                   </TabsTrigger>
                   <TabsTrigger
                     value="stats"
-                    className="justify-start data-[state=active]:bg-blue-950/75"
+                    className="justify-start  p-2 px-4 bg-blue-700/60 data-[state=active]:bg-slate-900"
                   >
-                    <LucideRadar className="text-sky-200 " />
+                    <LucideRadar className="text-sky-200  " />
                   </TabsTrigger>
                 </TabsList>
-
+                <Separator orientation="vertical" className="bg-blue-700" />
                 {/* Info Tab */}
 
                 <TabsContent
                   value="info"
-                  className="flex-auto mx-4 min-h-[300px] "
+                  className="flex-auto mx-6 ml-9 min-h-[300px] "
                 >
-                  {" "}
-                  <div className="flex flex-row gap-4">
-                    <div
-                      className={cn(
-                        "flex items-center gap-1 bg-sky-200 text-sky-950 text-xs font-semibold px-2 py-1 rounded-r-full rounded-l-md shadow-sm",
-                        "w-fit"
-                      )}
-                    >
-                      <Eye className="w-3 h-3" />
-                      <span>{formatThreeDigitNumber(P.order)}</span>
-                    </div>
-                    <h1 className=" capitalize text-xl text-white font-bold">
-                      {P.name}
-                    </h1>
-                  </div>
-                  <div className="flex flex-col gap-2 mt-4 w-full items-center justify-center">
-                    <h3>{P.species}</h3>
-
-                    <div className="flex flex-wrap gap-2">
-                      {P.types.map((type, index) => (
-                        <Badge
-                          key={index}
-                          className="bg-slate-700 text-sm capitalize"
-                        >
-                          {type}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
                   <Card className=" bg-blue-900/35 w-full gap-2 text-white border-blue-700 ">
                     <CardHeader>
-                      <h1 className="text-lg  text-center font-semibold">
+                      <h1 className="text-xl  text-center font-semibold">
                         Description
                       </h1>
                     </CardHeader>
-                    <div className="flex flex-col ">
-                      <p className="text-sm text-center italic">
-                        {P.description}
-                      </p>
-                    </div>
-                    <div className="flex flex-row w-full justify-around mt-4 mb-2">
-                      <div className="flex flex-col">
-                        <h1 className="px-4 py-2 border rounded-xl">
-                          {P.height} m
-                        </h1>
-                        <h3 className="text-sm opacity-80 text-center">
-                          {" "}
-                          Height
-                        </h3>
+
+                    <CardContent className="flex flex-col items-center">
+                      <div className="flex flex-col ">
+                        <p className="text-md text-center italic">
+                          {P.description}
+                        </p>
                       </div>
-                      <div className="flex flex-col">
-                        <h1 className="px-4 py-2 border rounded-xl">
-                          {P.weight} kg
-                        </h1>
-                        <h3 className="text-sm opacity-80 text-center">
-                          Weight
-                        </h3>
+                      <Separator className="mt-4 opacity-75 bg-blue-700" />
+                      <div className="flex flex-row w-full justify-around mt-4 mb-2">
+                        <div className="flex flex-col">
+                          <h1 className="px-2 text-center border-blue-100/60 py-2 w-24 text-lg border rounded-xl">
+                            {P.height/10} m
+                          </h1>
+                          <h3 className="text-sm opacity-80 text-center">
+                            {" "}
+                            Height
+                          </h3>
+                        </div>
+                        {/* <Separator orientation="vertical" /> */} 
+                        <div className="flex flex-col">
+                          <h1 className="px-2 text-center border-blue-100/60 py-2 w-24 text-lg border rounded-xl">
+                            {P.weight/10} kg
+                          </h1>
+                          <h3 className="text-sm opacity-80 text-center">
+                            Weight
+                          </h3>            
+                        </div>
                       </div>
-                    </div>
+                      <Separator className="mt-2 opacity-75 bg-blue-700 " />
+                      <div className="flex flex-row w-full justify-around mt-4 mb-2">
+                        <Cry id={P.order} />
+                        <PokedexEntry P={P} />
+                      </div>
+                    </CardContent>
                   </Card>
-                  <Card className=" bg-blue-900/35  w-full gap-2 text-white border-blue-700 ">
+                  <Card className=" bg-blue-900/35 mt-5 w-full gap-2 text-white border-blue-700 ">
                     <CardHeader>
                       <h1 className="text-lg  text-center font-semibold">
                         Abilities
@@ -219,7 +236,18 @@ const chartData = P.stats.map((s) => ({
                               : "bg-transparent"
                           }`}
                         >
-                          <h4 className="flex flex-row "><div>{ability.is_hidden ? <p className="text-gray-400">Hidden <span className="mx-1">|</span></p> : ""}</div>{ability.name}</h4>
+                          <h4 className="flex flex-row ">
+                            <div>
+                              {ability.is_hidden ? (
+                                <p className="text-gray-400">
+                                  Hidden <span className="mx-1">|</span>
+                                </p>
+                              ) : (
+                                ""
+                              )}
+                            </div>
+                            {ability.name}
+                          </h4>
                         </div>
                       ))}
                     </div>
@@ -262,7 +290,6 @@ const chartData = P.stats.map((s) => ({
 
         {/* Action Buttons */}
         <div className="flex gap-2 mt-6">
-          
           <Button variant="default" className="pr-3 pl-2">
             <Link
               href="/"
