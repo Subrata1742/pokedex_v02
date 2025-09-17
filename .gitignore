@@ -39,3 +39,25 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Local database files (Prisma)
+*.db
+*.db-journal
+
+# Project history (VSCode plugin, etc.)
+.history/
+
+# Editor configs
+.vscode/
+.idea/
+
+# Logs folder
+logs/
+*.log
+
+# OS junk files
+Thumbs.db
+
+# Clerk (sometimes generates .cache or auth config locally)
+.clerk/
+
