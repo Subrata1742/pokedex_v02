@@ -23,7 +23,7 @@ const Stats = ({ P }) => {
     return mapping[name] || name.charAt(0).toUpperCase() + name.slice(1);
   }
   return (
-    <div className="flex flex-col h-full w-full">
+    <div className="flex flex-col h-full mt-5 md:mt-0 w-full">
       <div className="text-white text-center text-2xl text-bold">
         Stats Overview
       </div>

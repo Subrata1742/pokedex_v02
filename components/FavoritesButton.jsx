@@ -1,13 +1,15 @@
 "use client";
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { Heart } from "lucide-react";
 
-export default function FavoriteButton({ name, image, order }) {
+export default function FavoriteButton({ name, image, order, user }) {
   const [isFav, setIsFav] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     async function checkFavorite() {
-      const res = await fetch(`/api/data?name=${name}`);
+      const res = await fetch(`/api/data?UserId=${user}&name=${name}`);
       if (!res.ok) return;
       const data = await res.json();
       setIsFav(data.isFav);
@@ -16,23 +18,37 @@ export default function FavoriteButton({ name, image, order }) {
   }, [name]);
 
   async function toggleFavorite() {
-    const res = await fetch("/api/data", {
-      method: isFav ? "DELETE" : "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, image, order }),
-    });
+    if (loading) return;
+    setLoading(true);
+    const UserId = user;
 
-    const data = await res.json();
+    try {
+      const res = await fetch("/api/data", {
+        method: isFav ? "DELETE" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ UserId, name, image, order }),
+      });
 
-    setIsFav(!isFav);
+      if (res.ok) {
+        setIsFav(!isFav);
+      }
+    } finally {
+      setLoading(false);
+    }
   }
-
+  if (!user) {
+    return (
+      <Link href="/favorites" className="text-center text-xs pt-2">
+        login to add
+      </Link>
+    );
+  }
   return (
-    <button onClick={toggleFavorite}>
+    <button onClick={toggleFavorite} disabled={loading}>
       {isFav ? (
-        <Heart className="w-fit h-fit p-1 rounded-full text-white bg-red-500" />
+        <Heart className="w-6 mx-2 md:w-fit h-6 md:h-fit p-0.5 rounded-full text-white bg-red-500" />
       ) : (
-        <Heart className="w-fit h-fit p-1  text-white" />
+        <Heart className="w-6 mx-2 md:w-fit h-6 md:h-fit p-0.5 rounded-full text-white" />
       )}
     </button>
   );

@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button";
 import React, { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
 import { CirclePlay } from "lucide-react";
 import { CirclePause } from "lucide-react";
 

@@ -1,21 +1,20 @@
 "use client";
-import { usePokemon } from "@/context/pokemonProvider";
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
+import typeImg from "@/lib/Type";
+import { usePokemon } from "@/context/pokemonProvider";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import Image from "next/image";
-import typeImg from "@/lib/Type";
-// import { ScrollArea } from "@/components/ui/scroll-area";
+import { LoaderCircle } from "lucide-react";
 
 export const Moves = ({ id }) => {
-  const { pokemon } = usePokemon(); // from context
+  const { pokemon } = usePokemon();
   const [loading, setLoading] = useState(true);
   const [poke, setPoke] = useState(null);
   const [error, setError] = useState(null);
@@ -24,7 +23,7 @@ export const Moves = ({ id }) => {
     const fetchPokemonData = async () => {
       const P = pokemon.find((p) => p.order === id);
       try {
-        if (!pokemon) return; // no data yet
+        if (!pokemon) return;
         setLoading(true);
 
         // fetch move details
@@ -95,26 +94,34 @@ export const Moves = ({ id }) => {
             width={35}
             height={35}
             quality={100}
+            className=""
           />
         </div>
       );
     }
   };
-  if (loading) return <div>Loading moves...</div>;
+  if (loading)
+    return (
+      <p>
+        <LoaderCircle className="animate-spin mt-6 w-10 h-10 text-white" />
+      </p>
+    );
   if (error) return <div>Error: {error}</div>;
   if (!poke) return <div>No data found</div>;
 
   return (
     // <div className="overflow-x-auto">
-    <Table className="max-h-[60vh] w-[45vw] border bg-slate-600/40 border-gray-700 rounded-lg">
+    <Table className=" animate-fadeInUp max-h-[60vh] w-[80vw] md:w-[45vw] border mt-0 md:mt-4 bg-slate-600/40 border-gray-700 rounded-lg">
       <TableHeader className="sticky top-0 z-10 bg-gray-800">
         <TableRow>
-          <TableHead className="w-[190px] text-white">Move</TableHead>
+          <TableHead className="text-white md:w-[190px] ">Move</TableHead>
           <TableHead className="text-white">Type</TableHead>
-          <TableHead className="text-white  w-[150px]">catagory</TableHead>
-          <TableHead className="text-white  w-[90px]">Power</TableHead>
-          <TableHead className="text-white  w-[70px] ">Acc.</TableHead>
-          <TableHead className="text-right w-[50px] text-white">PP</TableHead>
+          <TableHead className="text-white  md:w-[150px]">catagory</TableHead>
+          <TableHead className="text-white  md:w-[90px]">Power</TableHead>
+          <TableHead className="text-white  md:w-[70px] ">Acc.</TableHead>
+          <TableHead className="text-white text-right md:w-[50px] ">
+            PP
+          </TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -126,7 +133,7 @@ export const Moves = ({ id }) => {
             <TableCell>
               {
                 <img
-                  className="w-19 h-5 border border-slate-900 rounded"
+                  className="w-10 md:w-19 h-3 md:h-5 border border-slate-900 rounded"
                   src={
                     typeImg[move.type] ? typeImg[move.type] : "/placeholder.png"
                   }
@@ -134,12 +141,7 @@ export const Moves = ({ id }) => {
                 />
               }
             </TableCell>
-            <TableCell>
-              {
-                moveCatagory(move)
-                // move.catagory==="physical"?<img src="/catagory/physical.png" alt="physical"/>:""
-              }
-            </TableCell>
+            <TableCell>{moveCatagory(move)}</TableCell>
             <TableCell>{move.power || "—"}</TableCell>
             <TableCell>{move.acc}</TableCell>
             <TableCell className="text-right">{move.pp || "—"}</TableCell>

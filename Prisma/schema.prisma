@@ -9,6 +9,7 @@ datasource db {
 
 model UserData {
   id    String   @id @map("_id") @default(auto()) @db.ObjectId
+  UserId String  @unique
   name  String   @unique
   image String?  // nullable
   order Int

@@ -1,13 +1,13 @@
 "use client";
-import { Button } from "@/components/ui/button";
 import React, { useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
 import { Music } from "lucide-react";
 import { Volume2 } from "lucide-react";
 
 export const Cry = ({ id }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const ref = useRef(null);
-  const audioSrc = `https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${id}.ogg`; // Replace with your audio file URL
+  const audioSrc = `https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${id}.ogg`;
 
   const togglePlayPause = () => {
     setIsPlaying(!isPlaying);

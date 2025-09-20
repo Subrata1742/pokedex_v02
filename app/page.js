@@ -1,12 +1,15 @@
-import PokemonList from "./component/page";
-import Image from "next/image";
+import PokemonList from "@/components/page";
+
 
 
 export default function Home() {
 
-  return (
-  <PokemonList />
+  return (<div className="h-full">
 
-
-);
+<PokemonList />
+  </div>
+);}
+export const metadata = {
+  title: 'Pokedex',
+  description: 'Learn more about pokemon ',
 }

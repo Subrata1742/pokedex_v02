@@ -1,9 +1,9 @@
 "use client";
+import { useEffect, useState, useRef } from "react";
+import Image from "next/image";
 
 import { usePokemon } from "@/context/pokemonProvider";
 import { LoaderCircle } from "lucide-react";
-import { useEffect, useState, useRef } from "react";
-import Image from "next/image";
 
 export default function PokemonModel({ P, poke }) {
   const id = P;
@@ -28,10 +28,15 @@ export default function PokemonModel({ P, poke }) {
       ? poke.substring(poke.indexOf("-") + 1)
       : "regular";
 
+    if (slugForm && form.formName === slugForm) return true;
+
     if (slugForm === "hisui" && form.formName === "hisuian") return true;
+
     if (slugForm === "alola" && form.formName === "alolan") return true;
     if (slugForm === "gmax" && form.formName === "gmax") return true;
-    if (slugForm && form.formName === slugForm) return true;
+    if (!(slugForm === " ") && form.formName === "unique") return true;
+    if (!(slugForm === " ") && form.formName === "multiform") return true;
+    if (slugForm === "altered" && form.formName === "regular") return true; //giratina
 
     if (
       slugForm === "mega-x" &&
@@ -49,7 +54,6 @@ export default function PokemonModel({ P, poke }) {
       form.name.toLowerCase().includes("y")
     )
       return true;
-
     return false;
   }
 
@@ -57,16 +61,21 @@ export default function PokemonModel({ P, poke }) {
     if (!poke.name || !formsName) return;
 
     const match = formsName.find((f) => normalizeFormName(poke.name, f));
-    if (match) {
-      const viewer = document.querySelector("model-viewer");
-      if (viewer) {
-        viewer.src = match.model;
-      }
+    setModelUrl(match?.model);
+    if (!match) {
+      setFallback(true);
     }
+    // if (match) {
+    //   const viewer = document.querySelector("model-viewer");
+    //   if (viewer) {
+    //     viewer.src = match.model;
+    //   }
+    // }
   }, [poke.name, formsName]);
 
   useEffect(() => {
     const viewer = viewerRef.current;
+
     if (!viewer) return;
 
     const handleError = () => {
@@ -111,18 +120,18 @@ export default function PokemonModel({ P, poke }) {
         }
       `}</style>
 
-      <div className="bobbing">
+      <div className="bobbing w-full   md:w-fit ">
         <model-viewer
           ref={viewerRef}
-          src={formsName[0].model}
+          src={modelUrl}
           alt={poke.name}
+          className="w-[400px] h-[400px]  md:scale-100 scale-70 flex pr-8 md:pr-0 justify-center items-center"
           rotation-per-second="30deg"
           camera-controls
           disable-zoom
           disable-pan
           min-camera-orbit="auto 90deg auto"
           max-camera-orbit="360deg 90deg auto"
-          style={{ width: "400px", height: "400px" }}
           exposure="0.2"
           shadow-intensity="0.1"
           shadow-softness="0.01"

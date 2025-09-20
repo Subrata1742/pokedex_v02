@@ -1,7 +1,9 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Navbar from "./component/navbar";
+import Navbar from "@/components/navbar";
 import { PokemonProvider } from "@/context/pokemonProvider";
+import { ClerkProvider } from "@clerk/nextjs";
+import Image from "next/image";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,19 +22,39 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-       <PokemonProvider>
-<div className="  bg-transparent opacity-85  relative min-h-screen bg-fixed bg-cover bg-center"
-     style={{ backgroundImage: "url('/image/bg-dex.jpg')" }}>
-  
-       <Navbar />
-        {children}
-</div>
-      </PokemonProvider>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en">
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        >
+          <PokemonProvider>
+            {/* <div className="relative w-screen h-screen ">
+              {/* Blurred background layer */}
+            {/* <div
+                className="absolute inset-0 bg-fixed bg-cover bg-center filter blur-xs"
+                style={{ backgroundImage: "url('/image/bg-dex.jpg')" }}
+              ></div>  */}
+
+            {/* Content layer */}
+            {/* <div className="relative z-10 w-full "> */}
+            <div className="relative h-screen overflow-hidden flex flex-col items-center justify-center">
+              {/* Background layer (blur only here) */}
+              <div
+                className="absolute inset-0 -z-10 bg-cover bg-center blur-xs"
+                style={{ backgroundImage: "url('/image/bg-dex.jpg')" }}
+              />
+
+              {/* Foreground layer (not blurred) */}
+              <Navbar />
+              {children}
+            </div>
+
+            {/* </div>
+            </div>
+             */}
+          </PokemonProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
